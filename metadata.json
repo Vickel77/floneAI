@@ -1,0 +1,5 @@
+{
+  "name": "AI Virtual Try-On",
+  "description": "An e-commerce platform for a cloth store that allows users to select a dress and use a 'try it on' feature by uploading their image. The AI generates an image of them wearing the selected cloth.",
+  "requestFramePermissions": []
+}
