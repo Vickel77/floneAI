@@ -27,7 +27,7 @@ const Feature: React.FC<{ icon: React.ReactNode; title: string; description: str
 const SLIDES = [
   {
     id: 1,
-    image: 'https://i.pinimg.com/1200x/8f/aa/05/8faa05656a454aedf0980fcbb25f3fe1.jpg',
+    image: '/h1.png',
     subtitle: 'Timeless Style',
     title: 'Modern Wardrobe',
     description: 'Discover our curated new collection.',
@@ -37,39 +37,70 @@ const SLIDES = [
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2274&auto=format&fit=crop',
+    image: '/h2.png',
     subtitle: 'Summer 2024',
     title: 'Fresh Arrivals',
     description: 'Explore the latest trends for the upcoming season.',
     alignment: 'left',
     buttonText: 'VIEW LOOKBOOK',
-    textColor: 'text-white'
+    textColor: 'text-brand-primary'
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1617120799675-1445c84e95b9?q=80&w=2187&auto=format&fit=crop',
+    image: '/h3.png',
     subtitle: 'Exclusive Deals',
     title: 'Smart Fashion',
     description: 'Limited time offers on our premium selection.',
     alignment: 'center',
     buttonText: 'GRAB THE DEAL',
-    textColor: 'text-white'
+    textColor: 'text-brand-primary'
+  },
+  {
+    id: 4,
+    image: '/h4.png',
+    subtitle: 'Luxury Living',
+    title: 'Premium Quality',
+    description: 'Elevate your lifestyle with our premium picks.',
+    alignment: 'right',
+    buttonText: 'EXPLORE',
+    textColor: 'text-brand-primary'
+  },
+  {
+    id: 5,
+    image: '/h5.png',
+    subtitle: 'New Season',
+    title: 'Avant Garde',
+    description: 'Pushing the boundaries of fashion and art.',
+    alignment: 'left',
+    buttonText: 'SEE MORE',
+    textColor: 'text-brand-primary'
+  },
+  {
+    id: 6,
+    image: '/h6.png',
+    subtitle: 'Classic Style',
+    title: 'Urban Chic',
+    description: 'Modern vibes for the urban explorer.',
+    alignment: 'center',
+    buttonText: 'SHOP NOW',
+    textColor: 'text-brand-primary'
   }
 ];
 
-export const HomePage: React.FC<HomePageProps> = ({ 
-    onProductClick, 
-    onProductTryOn, 
-    searchQuery,
-    onAddToCart,
-    onToggleWishlist,
-    wishlistIds
+export const HomePage: React.FC<HomePageProps> = ({
+  onProductClick,
+  onProductTryOn,
+  searchQuery,
+  onAddToCart,
+  onToggleWishlist,
+  wishlistIds
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [delayedSlide, setDelayedSlide] = useState(0);
 
   // Filter products based on search query
-  const filteredProducts = PRODUCTS.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredProducts = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -83,6 +114,13 @@ export const HomePage: React.FC<HomePageProps> = ({
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayedSlide(currentSlide);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [currentSlide]);
+
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? SLIDES.length - 1 : prev - 1));
 
@@ -90,123 +128,199 @@ export const HomePage: React.FC<HomePageProps> = ({
     <>
       {/* Hero Carousel Section - Only show if not searching or if search is empty */}
       {searchQuery.trim() === "" && (
-      <section className="relative h-[60vh] md:h-[calc(100vh-80px)] bg-gray-900 overflow-hidden group">
-        {SLIDES.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-            }`}
-          >
-            {/* Background Image */}
-            <div
-              className={`absolute inset-0 bg-cover bg-center transition-transform duration-[6000ms] ease-out ${
-                index === currentSlide ? 'scale-105' : 'scale-100'
-              }`}
-              style={{ backgroundImage: `url('${slide.image}')` }}
-            />
-            
-            {/* Dark Overlay for better text readability */}
-            <div className={`absolute inset-0 ${slide.id === 1 ? 'bg-black/5' : 'bg-black/30'}`}></div>
-
-            {/* Content */}
-            <div
-              className={`relative h-full container mx-auto px-4 flex items-center ${
-                slide.alignment === 'left' ? 'justify-start' :
-                slide.alignment === 'right' ? 'justify-end' : 'justify-center'
-              }`}
-            >
-              <div
-                className={`max-w-xl p-6 md:p-12 ${
-                  slide.alignment === 'left' ? 'text-left' :
-                  slide.alignment === 'right' ? 'text-right' : 'text-center'
-                } ${slide.textColor}`}
-              >
-                 <span
-                    className={`block text-xl md:text-2xl font-medium mb-4 tracking-wider opacity-0 transition-all duration-700 delay-300 transform translate-y-4 ${
-                      index === currentSlide ? '!opacity-100 !translate-y-0' : ''
-                    }`}
-                  >
-                    {slide.subtitle}
+        <section className="relative h-[70vh] md:h-[calc(100vh-80px)] overflow-hidden group flex">
+          {/* Left Column (70%) - Horizontal Carousel */}
+          <div className="relative w-[75%] h-full overflow-hidden border-r border-white/5">
+            {/* Content Overlay */}
+            <div className="absolute inset-0 flex items-center pointer-events-none z-20">
+              <div className="container mx-auto px-8 md:px-16 flex justify-start items-center h-full">
+                <div className={`max-w-xl transition-all duration-700 ${SLIDES[currentSlide].textColor}`}>
+                  <span className="block text-xl md:text-2xl font-medium mb-4 tracking-wider animate-fadeInUp">
+                    {SLIDES[currentSlide].subtitle}
                   </span>
-                 <h1
-                    className={`text-5xl md:text-7xl font-bold mb-6 leading-tight opacity-0 transition-all duration-700 delay-500 transform translate-y-4 ${
-                      index === currentSlide ? '!opacity-100 !translate-y-0' : ''
-                    }`}
-                  >
-                    {slide.title}
-                 </h1>
-                 <p
-                    className={`text-lg md:text-xl mb-8 opacity-0 transition-all duration-700 delay-700 transform translate-y-4 ${
-                      index === currentSlide ? '!opacity-100 !translate-y-0' : ''
-                    }`}
-                  >
-                    {slide.description}
-                 </p>
-                 <button
-                    className={`bg-transparent border-2 ${slide.id === 1 ? 'border-black text-black hover:bg-black hover:text-white' : 'border-white text-white hover:bg-white hover:text-black'} font-bold py-3 px-8 transition-all duration-300 opacity-0 transform translate-y-4 ${
-                      index === currentSlide ? '!opacity-100 !translate-y-0 transition-delay-900' : ''
-                    }`}
-                  >
-                    {slide.buttonText}
-                 </button>
+                  <h1 className="text-5xl md:text-8xl font-bold mb-6 leading-tight animate-fadeInUp delay-200">
+                    {SLIDES[currentSlide].title}
+                  </h1>
+                  <p className="text-lg md:text-xl mb-8 animate-fadeInUp delay-400 opacity-90">
+                    {SLIDES[currentSlide].description}
+                  </p>
+                  <button className={`pointer-events-auto bg-transparent border-2 ${SLIDES[currentSlide].id === 1 ? 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white' : 'border-white text-white hover:bg-white hover:text-black'} font-bold py-4 px-10 transition-all duration-300 animate-fadeInUp`} style={{ animationDelay: '0.6s' }}>
+                    {SLIDES[currentSlide].buttonText}
+                  </button>
+                </div>
               </div>
             </div>
+
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {SLIDES.map((slide, index) => {
+                let diff = (index - currentSlide + SLIDES.length) % SLIDES.length;
+
+                let zIndex = 0;
+                let scale = 0.4;
+                let opacity = 0;
+                let left = '50%';
+                let translateX = '-50%';
+                let blurValue = 0
+
+                if (diff === 0) {
+                  // Rightmost (Largest)
+                  zIndex = 30;
+                  scale = 0.8;
+                  opacity = 1;
+                  left = '80%';
+                  blurValue = 0
+                } else if (diff === 1) {
+                  // Middle
+                  zIndex = 20;
+                  scale = 0.65;
+                  opacity = 0.8;
+                  left = '40%';
+                  blurValue = 5
+                } else if (diff === 2) {
+                  // Leftmost (Smallest)
+                  zIndex = 10;
+                  scale = 0.45;
+                  opacity = 0.5;
+                  left = '10%';
+                  blurValue = 10
+                } else if (diff === SLIDES.length - 1) {
+                  // Moving out to the right
+                  zIndex = 5;
+                  scale = 0.8;
+                  opacity = 0;
+                  left = '130%';
+                  blurValue = 20
+                } else if (diff === 3) {
+                  // Entering from left
+                  zIndex = 0;
+                  scale = 0.2;
+                  opacity = 0;
+                  left = '-20%';
+                  blurValue = 10
+                }
+
+                return (
+                  <div
+                    key={slide.id}
+                    className="absolute top-0 bottom-0 transition-all duration-1000 ease-in-out"
+                    style={{
+                      zIndex,
+                      opacity,
+                      left,
+                      transform: `translateX(${translateX}) scale(${scale})`,
+                      width: '30vw',
+                      height: '100%',
+                      filter: `blur(${blurValue}px)`,
+                    }}
+                  >
+                    <div
+                      className="w-full h-full bg-cover bg-center"
+                      style={{ backgroundImage: `url('${slide.image}')`, backgroundSize: "contain", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        ))}
 
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-        >
-          <ChevronLeftIcon className="w-6 h-6" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
-        >
-          <ChevronRightIcon className="w-6 h-6" />
-        </button>
+          {/* Right Column (30%) - Vertical Delayed Carousel */}
+          <div className="z-0 relative w-[25%] h-full overflow-hidden  bg-white">
+            {SLIDES.map((slide, index) => {
+              let diff = (index - delayedSlide + SLIDES.length) % SLIDES.length;
 
-        {/* Pagination Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
-          {SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`h-3 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? 'bg-white w-8' : 'bg-white/50 w-3 hover:bg-white/80'
-              }`}
-            />
-          ))}
-        </div>
-      </section>
+              let zIndex = 0;
+              let opacity = 0;
+              let translateY = '-100%';
+              let scale = 1;
+
+              if (diff === 0) {
+                // Current active (In focus)
+                zIndex = 1;
+                opacity = 1;
+                translateY = '0%';
+              } else if (diff === SLIDES.length - 1) {
+                // Moving out to bottom
+                zIndex = 1;
+                opacity = 0;
+                translateY = '100%';
+              } else if (diff === 1) {
+                // Incoming from top
+                zIndex = 1;
+                opacity = 0;
+                translateY = '-100%';
+              }
+
+              return (
+                <div
+                  key={`right-${slide.id}`}
+                  className="absolute inset-0 transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
+                  style={{
+                    zIndex: 0,
+                    opacity,
+                    transform: `translateY(${translateY}) scale(${scale})`,
+                  }}
+                >
+                  <div
+                    className="w-full h-full bg-containt bg-no-repeat bg-center"
+                    style={{ backgroundImage: `url('/ha${index + 1}.png')` }}
+                  />
+                  <div className="absolute inset-0 bg-black/20"></div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-8 top-1/2 -translate-y-1/2 z-50 bg-black/40 hover:bg-black/60 text-white p-4 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 border border-white/20 shadow-2xl"
+          >
+            <ChevronLeftIcon className="w-8 h-8" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-8 top-1/2 -translate-y-1/2 z-50 bg-black/40 hover:bg-black/60 text-white p-4 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 border border-white/20 shadow-2xl"
+          >
+            <ChevronRightIcon className="w-8 h-8" />
+          </button>
+
+          {/* Pagination Dots */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-3 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-white w-8' : 'bg-white/50 w-3 hover:bg-white/80'
+                  }`}
+              />
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Features Section */}
       {searchQuery.trim() === "" && (
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <Feature
-              icon={<span>🚚</span>}
-              title="Free Shipping"
-              description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
-            />
-            <Feature
-              icon={<span>🎧</span>}
-              title="Support 24/7"
-              description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
-            />
-            <Feature
-              icon={<span>💰</span>}
-              title="Money Return"
-              description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
-            />
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <Feature
+                icon={<span>🚚</span>}
+                title="Free Shipping"
+                description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
+              />
+              <Feature
+                icon={<span>🎧</span>}
+                title="Support 24/7"
+                description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
+              />
+              <Feature
+                icon={<span>💰</span>}
+                title="Money Return"
+                description="Lorem ipsum dolor sit amet, consectetu adipicising elit sed do."
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* Products Section */}
@@ -214,52 +328,52 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             {searchQuery ? (
-                <h2 className="text-3xl font-bold">Search Results for "{searchQuery}"</h2>
+              <h2 className="text-3xl font-bold">Search Results for "{searchQuery}"</h2>
             ) : (
-                <>
+              <>
                 <h2 className="text-3xl font-bold">Our Collections</h2>
                 <p className="text-gray-600">Click any product to go to the Virtual Try-On Studio</p>
-                </>
+              </>
             )}
           </div>
 
           {filteredProducts.length === 0 ? (
-              <div className="text-center py-20">
-                  <p className="text-xl text-gray-500">No products found matching your search.</p>
-              </div>
+            <div className="text-center py-20">
+              <p className="text-xl text-gray-500">No products found matching your search.</p>
+            </div>
           ) : (
-             <>
-                {africanNativeWears.length > 0 && (
+            <>
+              {africanNativeWears.length > 0 && (
                 <div>
-                    <h3 className="text-2xl font-semibold mb-8 border-b pb-4 text-gray-800">African Native Wears</h3>
-                    <ProductList
+                  <h3 className="text-2xl font-semibold mb-8 border-b pb-4 text-gray-800">African Native Wears</h3>
+                  <ProductList
                     products={africanNativeWears}
                     onProductClick={onProductClick}
                     onProductTryOn={onProductTryOn}
                     onAddToCart={onAddToCart}
                     onToggleWishlist={onToggleWishlist}
                     wishlistIds={wishlistIds}
-                    />
+                  />
                 </div>
-                )}
+              )}
 
-                {englishWears.length > 0 && (
+              {englishWears.length > 0 && (
                 <div className="mt-16 mb-16">
-                    <h3 className="text-2xl font-semibold mb-8 border-b pb-4 text-gray-800">English Wears</h3>
-                    <ProductList
+                  <h3 className="text-2xl font-semibold mb-8 border-b pb-4 text-gray-800">English Wears</h3>
+                  <ProductList
                     products={englishWears}
                     onProductClick={onProductClick}
                     onProductTryOn={onProductTryOn}
                     onAddToCart={onAddToCart}
                     onToggleWishlist={onToggleWishlist}
                     wishlistIds={wishlistIds}
-                    />
+                  />
                 </div>
-                )}
-             </>
+              )}
+            </>
           )}
 
-       
+
         </div>
       </section>
     </>

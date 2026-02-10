@@ -35,20 +35,18 @@ const imageUrlToBase64 = async (url: string): Promise<{ base64: string, mimeType
     });
 };
 
-
 export const virtualTryOn = async (
     userImageFile: File,
     product: Product
 ): Promise<string> => {
-    
     const userImageBase64 = await fileToBase64(userImageFile);
     const { base64: productImageBase64, mimeType: productMimeType } = await imageUrlToBase64(product.imageUrl);
 
-    const prompt = `Perform a virtual try-on. Use the provided image of a person and dress them in the clothing item from the other provided image. The clothing should fit the person's body naturally, matching their pose, body shape, and the lighting of the original photo. Preserve the original background. The output must be only the generated image with no extra text.`;
+    const prompt = `Perform a virtual try-on. Use the first provided image of a person and dress them in the clothing item from the second provided image. The clothing should fit the person's body naturally, matching their pose, body shape, and the lighting of the original photo. Preserve the original background and subjects body from the first image also preserve the original outfit style and color from the second image. The output must be only the generated image with no extra text.`;
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image-preview',
+            model: 'gemini-3-pro-image-preview',
             contents: {
                 parts: [
                     {
